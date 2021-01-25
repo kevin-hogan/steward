@@ -1,0 +1,18 @@
+{
+    "digital_ocean": {
+        "access_token": "[access token]",
+        "droplet_name": "example-dev",
+        "droplet_region": "nyc3",
+        "droplet_image": "ubuntu-20-04-x64",
+        "droplet_size_slug": "s-2vcpu-4gb"
+    },
+    "git": {
+        "code_server_username": "john-doe",
+        "email": "john.doe@example.com",
+        "name": "John Doe",
+        "clone_url": "https://github.com/owner/repo.git",
+        "repo_dir": "repo",
+        "branch": "my-development-branch",
+        "setup_script_name": "dev_setup.sh"
+    }
+}

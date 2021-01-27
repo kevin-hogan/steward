@@ -1,9 +1,9 @@
 import digitalocean
-import subprocess
 import time
 import sys
 import json
 from getpass import getpass
+from paramiko import SSHClient, WarningPolicy
 
 def wait_for_action_completion():
     action_list = droplet.get_actions()
@@ -11,8 +11,23 @@ def wait_for_action_completion():
         action.wait()
 
 def command_over_ssh(username, ip_address, command, force_pseudo_terminal=False):
-    pseudo_terminal_opt = "-t " if force_pseudo_terminal else ""
-    subprocess.run(("ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no " + pseudo_terminal_opt + username + "@" + ip_address + " " + command).split())
+    client = SSHClient()
+    client.set_missing_host_key_policy(WarningPolicy)
+    client.connect(ip_address, username=username)
+    stdin, stdout, stderr = client.exec_command(command, get_pty=force_pseudo_terminal)
+    for line in stdout:
+        print('... ' + line.strip('\n'))
+    client.close()
+
+def transfer_file(username, ip_address, local_file_path, remote_file_path):
+    client = SSHClient()
+    client.set_missing_host_key_policy(WarningPolicy)
+    client.connect(ip_address, username=username)
+    sftp_client = client.open_sftp()
+    sftp_client.put(local_file_path,remote_file_path)
+    sftp_client.close()
+
+
 
 if len(sys.argv) < 2:
     print("Need to pass config file as argument!")
@@ -51,7 +66,7 @@ print("Droplet created successfully!")
 print("Setting up dev environment...")
 
 time.sleep(35)
-subprocess.run(("scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no setup-script.sh root@" + droplet.ip_address + ":~").split())
+transfer_file("root", droplet.ip_address, "setup-script.sh", "setup-script.sh")
 
 command_over_ssh("root", droplet.ip_address, "export CLONE_URL=" + clone_url + \
                                              " REPO_DIR=" + config_dict["git"]["repo_dir"] + \

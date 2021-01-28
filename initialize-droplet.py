@@ -4,6 +4,9 @@ import sys
 import json
 from getpass import getpass
 from paramiko import SSHClient, WarningPolicy
+from sshtunnel import SSHTunnelForwarder
+
+DROPLET_USERNAME = "dev"
 
 def wait_for_action_completion():
     action_list = droplet.get_actions()
@@ -75,12 +78,22 @@ command_over_ssh("root", droplet.ip_address, "export CLONE_URL=" + clone_url + \
                                              " EMAIL=" + config_dict["git"]["email"] + \
                                              " NAME=" + config_dict["git"]["name"] + \
                                              " && bash setup-script.sh", force_pseudo_terminal=True)
-command_over_ssh("dev", droplet.ip_address, "vncserver -SecurityTypes None")
+command_over_ssh(DROPLET_USERNAME, droplet.ip_address, "vncserver -SecurityTypes None")
 
+tunnel = SSHTunnelForwarder(
+    droplet.ip_address,
+    ssh_username=DROPLET_USERNAME,
+    remote_bind_address=('127.0.0.1', 5901),
+    local_bind_address=('127.0.0.1', 5901)
+)
 
-print("Done!")
-print("Virtual desktop running at " + droplet.ip_address + " with VNC on display :1 as user 'dev'")
+tunnel.start()
 
+print("Done setting up virtual desktop!")
+print("Securely tunneling VNC display :1 to 127.0.0.1")
+print("IP address: " + droplet.ip_address)
+print("Username: " + DROPLET_USERNAME)
 
 input("Press enter to destroy virtual desktop...")
+tunnel.stop()
 droplet.destroy()

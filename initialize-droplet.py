@@ -5,6 +5,7 @@ import json
 from getpass import getpass
 from paramiko import SSHClient, WarningPolicy
 from sshtunnel import SSHTunnelForwarder
+from urllib.parse import quote as urlencode
 
 DROPLET_USERNAME = "dev"
 
@@ -47,7 +48,7 @@ clone_url = config_dict["git"]["clone_url"]
 https_prefix = "https://"
 if clone_url.find(https_prefix) == 0:
     clone_url = clone_url[:len(https_prefix)] + \
-        config_dict["git"]["code_server_username"] + ":" + code_server_password.replace("@", "%40") + \
+        config_dict["git"]["code_server_username"] + ":" + urlencode(code_server_password, safe="") + \
         "@" + clone_url[len(https_prefix):]
 else:
     print("Only https cloning supported!")

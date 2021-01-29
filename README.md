@@ -35,6 +35,6 @@ At this point, you can use your chosen VNC client to connect to your virtual des
 ## Disclaimers and warnings
 
 * Steward is currently a prototype that has not been well-tested. I'm happy for folks to create issues, but I just want users to have the appropriate expectations for quality when trying out the tool.
-* Note that the script does not validate the code server password (it will just fail all interactions with it). So type carefully!
+* Note that the script does not validate the code server password (cloning the repository will just eventually fail later on). So type carefully!
 * Note that the credentials you provide for the code server will be stored in clear-text on the cloud machine started by the script (because Steward clones repositories [this way](https://stackoverflow.com/a/10054470)). This may be a security concern for some users.
 * If Steward fails after creating the virtual machine but before reaching the end of the script, it probably did not destroy the machine. Remember to check your [Digital Ocean dashboard](https://cloud.digitalocean.com/droplets) to make sure you're not accumulating a bunch of droplets unexpectedly!

@@ -1,4 +1,7 @@
 {
+    "steward": {
+        "headless": "false"
+    },
     "digital_ocean": {
         "access_token": "[access token]",
         "droplet_name": "example-dev",

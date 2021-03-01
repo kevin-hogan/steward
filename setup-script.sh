@@ -1,15 +1,17 @@
 ufw allow ssh
 ufw -f enable
-apt update
-add-apt-repository main
-add-apt-repository universe
-add-apt-repository restricted
-add-apt-repository multiverse 
-apt install -y tasksel
-tasksel install ubuntu-desktop
-apt-get --purge remove -y gnome-initial-setup
-apt install -y tigervnc-standalone-server tigervnc-common
-snap install --classic code
+if [ $HEADLESS == "False" ]; then
+  apt update
+  add-apt-repository main
+  add-apt-repository universe
+  add-apt-repository restricted
+  add-apt-repository multiverse 
+  apt install -y tasksel
+  tasksel install ubuntu-desktop
+  apt-get --purge remove -y gnome-initial-setup
+  apt install -y tigervnc-standalone-server tigervnc-common
+  snap install --classic code
+fi
 
 adduser --disabled-password --gecos "" dev
 mkdir /home/dev/.ssh
